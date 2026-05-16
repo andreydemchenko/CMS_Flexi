@@ -1,0 +1,30 @@
+{# карточка поста: изображение, категория, заголовок, автор, дата #}
+{# вход: post (slug, title, image, category, category_slug, author, date) #}
+<article class="flex-col-c-s">
+    <a href="/post/{{ post.slug }}" class="wrap-pic-w hov1 trans-03 w-100">
+        <img src="{{ post.image|default('/assets/images/post-01.jpg') }}" alt="{{ post.title }}">
+    </a>
+
+    <div class="p-t-16">
+        <a href="/category/{{ post.category_slug|default('news') }}"
+           class="f1-s-10 cl2 hov-cl10 trans-03 text-uppercase">
+            {{ post.category|default('Новости') }}
+        </a>
+
+        <h5 class="p-t-10 p-b-8">
+            <a href="/post/{{ post.slug }}" class="f1-m-3 cl2 hov-cl10 trans-03">
+                {{ post.title }}
+            </a>
+        </h5>
+
+        <span class="cl8 f1-s-4">
+            <a href="#" class="cl8 hov-cl10 trans-03">by {{ post.author|default('Anonymous') }}</a>
+            <span class="m-rl-3">-</span>
+            <span>{{ post.date }}</span>
+        </span>
+
+        {% if post.excerpt is defined %}
+            <p class="f1-s-1 cl6 p-t-10">{{ post.excerpt }}</p>
+        {% endif %}
+    </div>
+</article>

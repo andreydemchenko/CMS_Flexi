@@ -1,0 +1,57 @@
+{% extends 'layouts/base.twig' %}
+
+{% block title %}{{ category.name }} — {{ site_name|default('CMS-Flexi') }}{% endblock %}
+
+{% block breadcrumb %}
+<div class="container">
+    <div class="headline bg0 flex-wr-sb-c p-rl-20 p-tb-8">
+        <div class="f2-s-1 p-r-30 m-tb-6">
+            <a href="/" class="breadcrumb-item f1-s-3 cl9">Главная</a>
+            <span class="breadcrumb-item f1-s-3 cl9">{{ category.name }}</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="bg0 p-t-30 p-b-90">
+    <div class="container">
+
+        <div class="how2 how2-cl4 flex-s-c m-b-25">
+            <h3 class="f1-m-2 cl3 tab01-title">{{ category.name }}</h3>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 col-lg-9 p-b-30">
+                <div class="row">
+                    {% for post in posts %}
+                        <div class="col-sm-6 col-md-6 p-b-30">
+                            {% include 'partials/post-card.twig' with { post: post } %}
+                        </div>
+                    {% else %}
+                        <div class="col-12">
+                            <p class="f1-s-1 cl6">В этой категории пока нет постов.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if pagination is defined and pagination.total_pages > 1 %}
+                    <nav class="flex-wr-c-c p-t-30">
+                        {% for page in 1..pagination.total_pages %}
+                            <a href="?page={{ page }}"
+                               class="flex-c-c size-w-3 size-h-2 bo-1-rad-15 bocl12 f1-s-3 cl8 hov-btn2 trans-03 p-rl-10 p-tb-5 m-rl-5 {{ page == pagination.current ? 'how-active1' : '' }}">
+                                {{ page }}
+                            </a>
+                        {% endfor %}
+                    </nav>
+                {% endif %}
+            </div>
+
+            <div class="col-md-4 col-lg-3 p-b-30">
+                {% include 'layouts/sidebar.twig' %}
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

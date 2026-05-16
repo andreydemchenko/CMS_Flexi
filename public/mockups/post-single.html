@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHP 8.2: что нового | CMS-Flexi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="_shared.css" rel="stylesheet">
+<style>
+  /* ── POST HERO ── */
+  .post-hero { position: relative; height: 420px; overflow: hidden; }
+  .post-hero img { width: 100%; height: 420px; object-fit: cover; }
+  .post-hero-overlay { position: absolute; inset: 0; background: linear-gradient(transparent 30%, rgba(0,0,0,.65)); }
+  .post-hero-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 40px 0 30px; }
+
+  /* ── POST CONTENT ── */
+  .post-body { background: #fff; padding: 36px; }
+  .post-body p { font-size: 15px; line-height: 1.9; color: #444; margin-bottom: 1.4rem; }
+  .post-body h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 2rem 0 1rem; color: #222; }
+  .post-body h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin: 1.5rem 0 .8rem; color: #222; }
+  .post-body blockquote { border-left: 4px solid var(--accent); padding: 16px 20px; background: #fdf8f7; margin: 1.5rem 0; font-style: italic; color: #555; font-size: 15px; }
+  .post-body img { max-width: 100%; height: auto; margin: 1rem 0; }
+  .post-body ul, .post-body ol { padding-left: 1.5rem; font-size: 15px; color: #444; line-height: 2; }
+  .post-body code { background: #f5f5f5; padding: 2px 6px; font-size: 13px; color: var(--accent-dark); }
+
+  /* ── POST FOOTER ── */
+  .post-footer { background: #fff; padding: 20px 36px; border-top: 1px solid #eee; }
+  .post-tags a { display: inline-block; background: #f0f0f0; color: #666; font-size: 11px; padding: 4px 12px; margin: 3px; text-transform: uppercase; letter-spacing: 1px; }
+  .post-tags a:hover { background: var(--accent); color: #fff; }
+  .author-box { background: #fff; padding: 28px; border-top: 2px solid var(--accent); margin-top: 24px; display: flex; gap: 20px; }
+  .author-box img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+  .author-box .info .name { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; display: block; margin-bottom: 6px; }
+  .author-box .info p { font-size: 13px; color: #666; margin: 0; }
+
+  /* ── COMMENTS ── */
+  .comments-area { background: #fff; padding: 36px; margin-top: 24px; }
+  .comment-item { display: flex; gap: 16px; margin-bottom: 28px; }
+  .comment-item .avatar img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; }
+  .comment-item .body { flex: 1; }
+  .comment-item .body .meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .comment-item .body .meta .author-name { font-weight: 600; font-size: 14px; }
+  .comment-item .body .meta .date { font-size: 11px; color: var(--muted); }
+  .comment-item .body p { font-size: 14px; color: #555; line-height: 1.7; margin: 0 0 6px; }
+  .comment-item .body .reply-link { font-size: 12px; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+  .comment-item .body .reply-link:hover { color: var(--accent-dark); }
+  .comment-item.is-reply { margin-left: 60px; }
+
+  /* ── COMMENT FORM ── */
+  .comment-form { background: #fff; padding: 36px; margin-top: 24px; }
+  .comment-form .form-control { border-radius: 0; border: 1px solid #ddd; font-size: 13px; background: #fafafa; }
+  .comment-form .form-control:focus { border-color: var(--accent); box-shadow: none; }
+  .comment-form label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="topbar py-1">
+  <div class="container d-flex justify-content-between align-items-center">
+    <span>Пятница, 15 мая 2026</span>
+    <div class="d-flex gap-3">
+      <a href="#"><i class="bi bi-twitter-x"></i></a>
+      <a href="#"><i class="bi bi-pinterest"></i></a>
+      <a href="#"><i class="bi bi-instagram"></i></a>
+      <a href="#"><i class="bi bi-facebook"></i></a>
+    </div>
+  </div>
+</div>
+<nav class="site-nav py-2">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+      <form class="nav-search d-flex" style="width:180px;">
+        <input class="form-control form-control-sm" type="search" placeholder="Поиск...">
+        <button class="btn btn-sm px-3" type="submit"><i class="bi bi-search"></i></button>
+      </form>
+      <a href="home.html" class="site-logo">CMS<span>·</span>Flexi</a>
+      <ul class="nav mb-0">
+        <li class="nav-item"><a class="nav-link" href="home.html">Главная</a></li>
+        <li class="nav-item"><a class="nav-link" href="posts-grid.html">Посты</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Путешествия</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Мода</a></li>
+        <li class="nav-item"><a class="nav-link" href="contact.html">Контакты</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <div class="container">
+    <a href="home.html">Главная</a> &nbsp;/&nbsp;
+    <a href="posts-grid.html">Посты</a> &nbsp;/&nbsp;
+    <span>PHP 8.2: что нового</span>
+  </div>
+</div>
+
+<!-- POST HERO -->
+<div class="post-hero">
+  <img src="https://placehold.co/1400x420/3a3a3a/888?text=Post+Hero+Image" alt="">
+  <div class="post-hero-overlay"></div>
+  <div class="post-hero-caption">
+    <div class="container">
+      <span class="post-tag d-inline-block mb-2" style="background:var(--accent);color:#fff;padding:3px 12px">Технологии</span>
+      <h1 style="font-family:'Playfair Display',serif;color:#fff;font-size:2.2rem;line-height:1.3;margin-bottom:10px">PHP 8.2: что нового и зачем оно вам</h1>
+      <span class="post-meta" style="color:rgba(255,255,255,.75)">BY <a href="#" style="color:var(--accent)">Андрей Демченко</a> &nbsp;·&nbsp; 12 мая 2026 &nbsp;·&nbsp; <i class="bi bi-clock"></i> 8 мин чтения &nbsp;·&nbsp; <i class="bi bi-eye"></i> 1 420 просмотров</span>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="container py-5">
+  <div class="row">
+
+    <!-- MAIN COLUMN -->
+    <div class="col-lg-9">
+
+      <!-- SHARE BAR -->
+      <div class="d-flex align-items-center gap-3 mb-3 bg-white p-3" style="font-size:13px;border-bottom:1px solid #eee">
+        <span style="font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:1px">Поделиться:</span>
+        <a href="#" class="btn btn-sm" style="background:#1877f2;color:#fff;border-radius:0;font-size:12px"><i class="bi bi-facebook"></i> Facebook</a>
+        <a href="#" class="btn btn-sm" style="background:#000;color:#fff;border-radius:0;font-size:12px"><i class="bi bi-twitter-x"></i> Twitter</a>
+        <a href="#" class="btn btn-sm" style="background:#e60023;color:#fff;border-radius:0;font-size:12px"><i class="bi bi-pinterest"></i> Pinterest</a>
+        <a href="#" class="ms-auto" style="color:var(--muted)"><i class="bi bi-bookmark"></i></a>
+      </div>
+
+      <!-- POST BODY -->
+      <div class="post-body">
+        <p>Это версия Lorem Ipsum из Photoshop. <strong>Proin gravida nibh vel velit auctor aliquet.</strong> Aenean sollicitudin, lorem quis bibendum auctor, nisi elit consequat ipsum, nec sagittis sem nibh id elit. Duis sed odio sit amet nibh vulputate cursus a sit amet mauris. Morbi accumsan ipsum velit. Nam nec tellus a odio tincidunt auctor a ornare odio.</p>
+
+        <p>Sed non mauris vitae erat consequat auctor eu in elit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Mauris in erat justo. Nullam ac urna eu felis dapibus condimentum.</p>
+
+        <h2>Новые возможности readonly классов</h2>
+
+        <p>Sed ante. Vivamus tortor. Duis mattis egestas metus. Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla suscipit ligula in lacus.</p>
+
+        <blockquote>
+          "Readonly классы — это один из самых ожидаемых фич PHP 8.2. Они позволяют объявить все свойства класса как readonly одним ключевым словом."
+        </blockquote>
+
+        <p>Curabitur aliquet quam id dui posuere blandit. Cras nulla. Nulla in ipsum. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat.</p>
+
+        <h3>Пример кода</h3>
+
+        <p>В PHP 8.2 можно писать <code>readonly class User</code> вместо того чтобы помечать каждое свойство отдельно:</p>
+
+        <img src="https://placehold.co/780x300/f5f5f5/bbb?text=Code+Example" alt="Пример кода" class="w-100">
+
+        <h2>Fibers и асинхронность</h2>
+
+        <p>Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus. Phasellus ultrices nulla quis nibh. Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus. Nam nulla quam, gravida non, commodo a, sodales sit amet, nisi.</p>
+
+        <ul>
+          <li>Fibers — примитивы для кооперативной многозадачности</li>
+          <li>Не требуют сторонних расширений</li>
+          <li>Отличная интеграция с ReactPHP и Amp</li>
+          <li>Простой API: <code>Fiber::start()</code>, <code>Fiber::resume()</code></li>
+        </ul>
+
+        <p>Pellentesque ut neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In dui magna, posuere eget, vestibulum et, tempor auctor, justo.</p>
+
+        <h2>Стоит ли мигрировать уже сейчас?</h2>
+
+        <p>Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent congue erat at massa. Sed cursus turpis vitae tortor. Donec posuere vulputate arcu.</p>
+
+        <ol>
+          <li>Проверьте совместимость пакетов через <code>composer outdated</code></li>
+          <li>Запустите <code>php-cs-fixer</code> с правилами 8.2</li>
+          <li>Прогоните полный тест-сьют</li>
+          <li>Постепенно переходите на readonly и enum</li>
+        </ol>
+      </div>
+
+      <!-- POST FOOTER -->
+      <div class="post-footer">
+        <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+          <div class="post-tags">
+            <span style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#666;margin-right:8px">Теги:</span>
+            <a href="#">PHP</a>
+            <a href="#">PHP 8.2</a>
+            <a href="#">Разработка</a>
+            <a href="#">Бэкенд</a>
+          </div>
+          <div class="post-social">
+            <a href="#"><i class="bi bi-facebook"></i></a>
+            <a href="#"><i class="bi bi-twitter-x"></i></a>
+            <a href="#"><i class="bi bi-pinterest"></i></a>
+            <a href="#"><i class="bi bi-instagram"></i></a>
+            <a href="#"><i class="bi bi-bookmark"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PREV / NEXT -->
+      <div class="row mt-3 g-3">
+        <div class="col-6">
+          <a href="post-single.html" class="d-block bg-white p-3 h-100" style="border-left:3px solid var(--accent)">
+            <span style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px"><i class="bi bi-chevron-left"></i> Предыдущий</span>
+            <div class="post-title mt-1" style="font-size:.95rem">MVC своими руками без фреймворка</div>
+          </a>
+        </div>
+        <div class="col-6">
+          <a href="post-single.html" class="d-block bg-white p-3 h-100 text-end" style="border-right:3px solid var(--accent)">
+            <span style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Следующий <i class="bi bi-chevron-right"></i></span>
+            <div class="post-title mt-1" style="font-size:.95rem">Twig против Blade: выбираем шаблонизатор</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- AUTHOR BOX -->
+      <div class="author-box mt-4">
+        <img src="https://placehold.co/80x80/ccc/888?text=AD" alt="">
+        <div class="info">
+          <span class="name">Андрей Демченко</span>
+          <p>Senior PHP-разработчик с 10+ годами опыта. Специализируется на архитектуре backend-систем, DDD и чистом коде. Автор нескольких open-source проектов.</p>
+          <div class="social-icons mt-2">
+            <a href="#"><i class="bi bi-twitter-x"></i></a>
+            <a href="#"><i class="bi bi-github"></i></a>
+            <a href="#"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMMENTS -->
+      <div class="comments-area">
+        <div class="section-heading mb-4"><h3>Комментарии (4)</h3></div>
+
+        <!-- Comment 1 -->
+        <div class="comment-item">
+          <div class="avatar"><img src="https://placehold.co/52x52/ddd/888?text=U1" alt=""></div>
+          <div class="body">
+            <div class="meta">
+              <span class="author-name">Игорь Петров</span>
+              <span class="date">13 мая 2026 в 10:42</span>
+            </div>
+            <p>Отличная статья! Именно то, чего я ждал. Readonly классы действительно упрощают код — уже перевёл несколько DTO на новый синтаксис.</p>
+            <a href="#comment-form" class="reply-link">↩ Ответить</a>
+          </div>
+        </div>
+
+        <!-- Comment 1 reply -->
+        <div class="comment-item is-reply">
+          <div class="avatar"><img src="https://placehold.co/52x52/ccc/888?text=AD" alt=""></div>
+          <div class="body">
+            <div class="meta">
+              <span class="author-name" style="color:var(--accent)">Андрей Демченко <small style="background:var(--accent);color:#fff;font-size:10px;padding:1px 6px;font-weight:600">Автор</small></span>
+              <span class="date">13 мая 2026 в 11:15</span>
+            </div>
+            <p>Рад слышать! Да, DTO — идеальный кейс для readonly классов. Код становится намного чище и выразительнее.</p>
+            <a href="#comment-form" class="reply-link">↩ Ответить</a>
+          </div>
+        </div>
+
+        <!-- Comment 2 -->
+        <div class="comment-item">
+          <div class="avatar"><img src="https://placehold.co/52x52/bbb/888?text=U2" alt=""></div>
+          <div class="body">
+            <div class="meta">
+              <span class="author-name">Мария Смирнова</span>
+              <span class="date">14 мая 2026 в 08:30</span>
+            </div>
+            <p>Спасибо за подробный разбор. Хотела бы увидеть отдельную статью про Fibers и интеграцию с ReactPHP — там много нюансов.</p>
+            <a href="#comment-form" class="reply-link">↩ Ответить</a>
+          </div>
+        </div>
+
+        <!-- Comment 3 -->
+        <div class="comment-item">
+          <div class="avatar"><img src="https://placehold.co/52x52/c8c8c8/888?text=U3" alt=""></div>
+          <div class="body">
+            <div class="meta">
+              <span class="author-name">Антон Колесов</span>
+              <span class="date">14 мая 2026 в 16:05</span>
+            </div>
+            <p>Мигрировал свой проект на 8.2 три месяца назад. Проблем с совместимостью почти не было — только один пакет потребовал обновления. Всем рекомендую!</p>
+            <a href="#comment-form" class="reply-link">↩ Ответить</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMMENT FORM -->
+      <div class="comment-form" id="comment-form">
+        <div class="section-heading mb-4"><h3>Оставить комментарий</h3></div>
+        <form>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label>Имя *</label>
+              <input type="text" class="form-control" placeholder="Ваше имя" required>
+            </div>
+            <div class="col-md-6">
+              <label>Email *</label>
+              <input type="email" class="form-control" placeholder="ваш@email.com" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label>Сайт</label>
+            <input type="url" class="form-control" placeholder="https://yoursite.com">
+          </div>
+          <div class="mb-4">
+            <label>Комментарий *</label>
+            <textarea class="form-control" rows="6" placeholder="Ваш комментарий..." required></textarea>
+          </div>
+          <div class="form-check mb-4">
+            <input class="form-check-input" type="checkbox" id="saveInfo">
+            <label class="form-check-label" for="saveInfo" style="font-size:13px;text-transform:none;letter-spacing:0">Сохранить моё имя и email для следующих комментариев</label>
+          </div>
+          <button type="submit" class="btn btn-read" style="font-size:12px;padding:10px 28px">Отправить комментарий</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="col-lg-3">
+      <div class="sidebar-widget">
+        <div class="sidebar-heading">Поиск</div>
+        <form class="sidebar-search d-flex">
+          <input class="form-control" type="search" placeholder="Поиск...">
+          <button class="btn px-3" type="submit"><i class="bi bi-search" style="color:#fff"></i></button>
+        </form>
+      </div>
+      <div class="sidebar-widget">
+        <div class="sidebar-heading">Популярное</div>
+        <div class="popular-post"><img src="https://placehold.co/64x50/ccc/888?text=P" alt=""><div class="info"><a href="post-single.html" class="title">PHP 8.2: что нового</a><span class="date">12 МАЯ 2026</span></div></div>
+        <div class="popular-post"><img src="https://placehold.co/64x50/bbb/888?text=P" alt=""><div class="info"><a href="post-single.html" class="title">Twig против Blade</a><span class="date">03 МАЯ 2026</span></div></div>
+        <div class="popular-post"><img src="https://placehold.co/64x50/ddd/888?text=P" alt=""><div class="info"><a href="post-single.html" class="title">Весенний стиль 2026</a><span class="date">29 АПР 2026</span></div></div>
+        <div class="popular-post"><img src="https://placehold.co/64x50/c8c8c8/888?text=P" alt=""><div class="info"><a href="post-single.html" class="title">Топ альбомов апреля</a><span class="date">25 АПР 2026</span></div></div>
+      </div>
+      <div class="sidebar-widget p-0 mb-4">
+        <div style="border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;height:200px;color:var(--accent);font-size:13px;font-weight:600;letter-spacing:1px">250 × 200</div>
+      </div>
+      <div class="sidebar-widget">
+        <div class="sidebar-heading">Категории</div>
+        <ul class="category-list list-unstyled mb-0">
+          <li><a href="#">Технологии</a><span>128</span></li>
+          <li><a href="#">Фото</a><span>96</span></li>
+          <li><a href="#">Образ жизни</a><span>84</span></li>
+          <li><a href="#">Музыка</a><span>49</span></li>
+          <li><a href="#">Путешествия</a><span>198</span></li>
+          <li><a href="#">Веб-дизайн</a><span>32</span></li>
+        </ul>
+      </div>
+      <div class="sidebar-widget">
+        <div class="sidebar-heading">Мы в соцсетях</div>
+        <div class="social-icons">
+          <a href="#"><i class="bi bi-facebook"></i></a>
+          <a href="#"><i class="bi bi-twitter-x"></i></a>
+          <a href="#"><i class="bi bi-pinterest"></i></a>
+          <a href="#"><i class="bi bi-instagram"></i></a>
+          <a href="#"><i class="bi bi-youtube"></i></a>
+          <a href="#"><i class="bi bi-telegram"></i></a>
+        </div>
+      </div>
+      <div class="sidebar-widget">
+        <div class="sidebar-heading">Слайдер постов</div>
+        <img src="https://placehold.co/260x140/ccc/888?text=Widget+Post" class="w-100" alt="">
+        <p class="mt-2 mb-0" style="font-size:12px;color:#666">Популярный пост из слайдера виджета.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="py-5 mt-2">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <h5>О нас</h5>
+        <p style="font-size:13px;line-height:1.8">CMS-Flexi — современная система управления контентом на PHP без зависимости от тяжёлых фреймворков.</p>
+      </div>
+      <div class="col-md-4 mb-4">
+        <h5>Навигация</h5>
+        <ul class="list-unstyled" style="font-size:13px">
+          <li class="mb-1"><a href="home.html">Главная</a></li>
+          <li class="mb-1"><a href="posts-grid.html">Все посты</a></li>
+          <li class="mb-1"><a href="contact.html">Контакты</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4 mb-4">
+        <h5>Подписка</h5>
+        <form class="newsletter-form">
+          <input class="form-control mb-2" type="email" placeholder="Ваш email">
+          <button class="btn w-100 py-2" type="submit" style="background:var(--accent);color:#fff;border-radius:0;font-size:12px;font-weight:600;letter-spacing:1px">ПОДПИСАТЬСЯ</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</footer>
+<div class="footer-bottom py-2 text-center">&copy; 2026 CMS-Flexi</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

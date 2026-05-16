@@ -1,0 +1,23 @@
+{
+    "name": "cms-flexi/cms-flexi",
+    "description": "CMS-Flexi — a lightweight PHP 8.2 MVC blog CMS",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "twig/twig": "^3.24"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

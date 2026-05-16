@@ -1,0 +1,90 @@
+{# верхний бар + логотип + меню #}
+<header>
+    <div class="container-menu-desktop">
+
+        {# Top bar #}
+        <div class="topbar">
+            <div class="content-topbar container h-100">
+                <div class="left-topbar">
+                    <a href="/" class="left-topbar-item">Главная</a>
+                    <a href="/register" class="left-topbar-item">Регистрация</a>
+                    {% if session.user_id is defined %}
+                        <a href="/logout" class="left-topbar-item">Выход</a>
+                    {% else %}
+                        <a href="/login" class="left-topbar-item">Вход</a>
+                    {% endif %}
+                </div>
+
+                <div class="right-topbar">
+                    <a href="#"><span class="fab fa-facebook-f"></span></a>
+                    <a href="#"><span class="fab fa-twitter"></span></a>
+                    <a href="#"><span class="fab fa-youtube"></span></a>
+                </div>
+            </div>
+        </div>
+
+        {# Mobile header #}
+        <div class="wrap-header-mobile">
+            <div class="logo-mobile">
+                <a href="/"><img src="/assets/images/icons/logo-01.png" alt="LOGO"></a>
+            </div>
+
+            <div class="btn-show-menu-mobile hamburger hamburger--squeeze m-r--8">
+                <span class="hamburger-box">
+                    <span class="hamburger-inner"></span>
+                </span>
+            </div>
+        </div>
+
+        {# Mobile menu #}
+        <div class="menu-mobile">
+            <ul class="topbar-mobile">
+                <li class="left-topbar">
+                    <a href="/" class="left-topbar-item">Главная</a>
+                    {% if session.user_id is defined %}
+                        <a href="/logout" class="left-topbar-item">Выход</a>
+                    {% else %}
+                        <a href="/login" class="left-topbar-item">Вход</a>
+                        <a href="/register" class="left-topbar-item">Регистрация</a>
+                    {% endif %}
+                </li>
+            </ul>
+
+            <ul class="main-menu-m">
+                <li><a href="/">Главная</a></li>
+                <li><a href="/category/news">Новости</a></li>
+                <li><a href="/category/tech">Технологии</a></li>
+                <li><a href="/category/lifestyle">Стиль жизни</a></li>
+            </ul>
+        </div>
+
+        {# Logo (no ads banner — removed) #}
+        <div class="wrap-logo container">
+            <div class="logo">
+                <a href="/"><img src="/assets/images/icons/logo-01.png" alt="LOGO"></a>
+            </div>
+        </div>
+
+        {# Main desktop nav #}
+        <div class="wrap-main-nav">
+            <div class="main-nav">
+                <nav class="menu-desktop">
+                    <a class="logo-stick" href="/">
+                        <img src="/assets/images/icons/logo-01.png" alt="LOGO">
+                    </a>
+
+                    <ul class="main-menu">
+                        <li class="main-menu-active">
+                            <a href="/">Главная</a>
+                        </li>
+                        <li><a href="/category/news">Новости</a></li>
+                        <li><a href="/category/tech">Технологии</a></li>
+                        <li><a href="/category/lifestyle">Стиль жизни</a></li>
+                        <li><a href="/category/travel">Путешествия</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+    </div>
+</header>

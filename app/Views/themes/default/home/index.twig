@@ -1,0 +1,37 @@
+{% extends 'layouts/base.twig' %}
+
+{% block title %}{{ site_name|default('CMS-Flexi') }} — Главная{% endblock %}
+
+{% block content %}
+<section class="bg0 p-t-40 p-b-80">
+    <div class="container">
+
+        <div class="how2 how2-cl4 flex-s-c m-b-25">
+            <h3 class="f1-m-2 cl3 tab01-title">Последние записи</h3>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 col-lg-9 p-b-30">
+
+                <div class="row">
+                    {% for post in posts %}
+                        <div class="col-sm-6 col-md-6 p-b-30">
+                            {% include 'partials/post-card.twig' with { post: post } %}
+                        </div>
+                    {% else %}
+                        <div class="col-12">
+                            <p class="f1-s-1 cl6">Пока нет ни одной записи.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            <div class="col-md-4 col-lg-3 p-b-30">
+                {% include 'layouts/sidebar.twig' %}
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

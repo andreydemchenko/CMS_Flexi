@@ -1,0 +1,21 @@
+# Composer dependencies
+/vendor/
+
+# Compiled Twig cache
+/storage/cache/twig/*
+!/storage/cache/twig/.gitkeep
+
+# Environment / local overrides
+.env
+.env.local
+config/config.local.php
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Logs
+*.log
