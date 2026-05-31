@@ -17,7 +17,7 @@ class AuthController extends BaseController
 
     public function showLogin(): string
     {
-        return $this->view('auth.login', $this->popFlash());
+        return $this->render('auth/login', $this->popFlash());
     }
 
     public function login(): string
@@ -70,7 +70,7 @@ class AuthController extends BaseController
 
     public function showRegister(): string
     {
-        return $this->view('auth.register', $this->popFlash());
+        return $this->render('auth/register', $this->popFlash());
     }
 
     public function register(): string

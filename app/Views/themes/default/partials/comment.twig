@@ -1,0 +1,27 @@
+{# рекурсивный комментарий, отрисовывается через макрос #}
+{% macro render(comment, depth) %}
+    {% import _self as self %}
+    {% set name = comment.user_display_name|default(comment.user_username|default(comment.author_name|default('Гость'))) %}
+    {% set initial = name|first|upper %}
+
+    <div class="site-comment {{ depth > 0 ? 'site-comment--reply' : '' }}">
+        <div class="site-comment__avatar">{{ initial }}</div>
+
+        <div class="site-comment__body">
+            <div class="site-comment__head">
+                <h6 class="site-comment__author">{{ name }}</h6>
+                <span class="site-comment__date">{{ comment.created_at|date('d M Y, H:i') }}</span>
+            </div>
+            <p class="site-comment__text">{{ comment.content }}</p>
+            <a href="#comment-form"
+               data-parent="{{ comment.id }}"
+               class="js-reply site-comment__reply-link">
+                ↩ Ответить
+            </a>
+        </div>
+    </div>
+
+    {% for child in comment.children|default([]) %}
+        {{ self.render(child, depth + 1) }}
+    {% endfor %}
+{% endmacro %}

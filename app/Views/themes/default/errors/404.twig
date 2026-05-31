@@ -1,0 +1,15 @@
+{% extends 'layouts/base.twig' %}
+
+{% block title %}Не найдено — {{ site_name|default('CMS-Flexi') }}{% endblock %}
+
+{% block content %}
+<section class="bg0 p-t-80 p-b-120">
+    <div class="container text-center">
+        <h1 class="f1-l-3 cl2 m-b-20">404</h1>
+        <p class="f1-s-1 cl6 p-b-30">{{ message|default('Страница не найдена.') }}</p>
+        <a href="/" class="flex-c-c size-a-3 bg10 bo-rad-23 f1-s-1 cl0 hov-btn1 trans-03 p-rl-30 dis-inline-flex">
+            На главную
+        </a>
+    </div>
+</section>
+{% endblock %}

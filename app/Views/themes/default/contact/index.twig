@@ -1,0 +1,104 @@
+{% extends 'layouts/base.twig' %}
+
+{% block title %}Контакты — {{ site_name|default('CMS-Flexi') }}{% endblock %}
+
+{% block breadcrumb %}
+<div class="container">
+    <div class="headline bg0 flex-wr-sb-c p-rl-20 p-tb-8">
+        <div class="f2-s-1 p-r-30 m-tb-6">
+            <a href="/" class="breadcrumb-item f1-s-3 cl9">Главная</a>
+            <span class="breadcrumb-item f1-s-3 cl9">Контакты</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="bg0 p-t-30 p-b-90">
+    <div class="container">
+
+        <div class="how2 how2-cl4 flex-s-c m-b-25">
+            <h3 class="f1-m-2 cl3 tab01-title">Свяжитесь с нами</h3>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-lg-8 p-b-30">
+
+                {% if flash %}
+                    {% if flash.type == 'success' %}
+                        <div class="site-alert site-alert--success">{{ flash.message }}</div>
+                    {% else %}
+                        <div class="site-alert site-alert--error">
+                            <strong>Не удалось отправить:</strong>
+                            <ul>
+                                {% for field, msg in flash.errors|default({}) %}
+                                    <li>{{ msg }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+                <form action="/contact" method="post">
+                    <div class="row">
+                        <div class="col-md-6 site-form-row">
+                            <label class="site-label" for="contact-name">Имя *</label>
+                            <input id="contact-name" class="site-input"
+                                   type="text" name="name"
+                                   value="{{ old.name|default('') }}" required>
+                        </div>
+                        <div class="col-md-6 site-form-row">
+                            <label class="site-label" for="contact-email">Email *</label>
+                            <input id="contact-email" class="site-input"
+                                   type="email" name="email"
+                                   value="{{ old.email|default('') }}" required>
+                        </div>
+                    </div>
+
+                    <div class="site-form-row">
+                        <label class="site-label" for="contact-subject">Тема</label>
+                        <input id="contact-subject" class="site-input"
+                               type="text" name="subject"
+                               value="{{ old.subject|default('') }}">
+                    </div>
+
+                    <div class="site-form-row">
+                        <label class="site-label" for="contact-message">Сообщение *</label>
+                        <textarea id="contact-message" class="site-textarea"
+                                  name="message" rows="7" required>{{ old.message|default('') }}</textarea>
+                    </div>
+
+                    <button type="submit" class="site-btn">Отправить</button>
+                </form>
+            </div>
+
+            <div class="col-md-12 col-lg-4 p-b-30">
+                <div class="site-info-card">
+                    <h4>Информация</h4>
+
+                    <div class="site-info-item">
+                        <span class="site-info-item__label">Адрес</span>
+                        ул. Ленина, д. 1, оф. 205<br>Москва, 123456
+                    </div>
+
+                    <div class="site-info-item">
+                        <span class="site-info-item__label">Email</span>
+                        <a href="mailto:hello@cms-flexi.ru">hello@cms-flexi.ru</a>
+                    </div>
+
+                    <div class="site-info-item">
+                        <span class="site-info-item__label">Телефон</span>
+                        <a href="tel:+74951234567">+7 (495) 123-45-67</a>
+                    </div>
+
+                    <div class="site-info-item">
+                        <span class="site-info-item__label">Часы работы</span>
+                        Пн–Пт: 9:00–18:00
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

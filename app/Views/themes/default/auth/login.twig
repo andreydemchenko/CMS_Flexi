@@ -1,0 +1,45 @@
+{% extends 'layouts/base.twig' %}
+
+{% block title %}Вход — {{ site_name|default('CMS-Flexi') }}{% endblock %}
+
+{% block content %}
+<div class="site-auth-page">
+    <div class="site-auth-card">
+        <h1 class="site-auth-card__title">Вход</h1>
+        <p class="site-auth-card__subtitle">Войдите, чтобы оставлять комментарии и публиковать материалы.</p>
+
+        {% if errors|default([])|length %}
+            <div class="site-alert site-alert--error">
+                <ul>
+                    {% for err in errors %}
+                        <li>{{ err }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <form method="post" action="/login">
+            <div class="site-form-row">
+                <label for="login-email" class="site-label">Email</label>
+                <input id="login-email" class="site-input"
+                       type="email" name="email"
+                       value="{{ old.email|default('') }}"
+                       required autofocus>
+            </div>
+
+            <div class="site-form-row">
+                <label for="login-password" class="site-label">Пароль</label>
+                <input id="login-password" class="site-input"
+                       type="password" name="password"
+                       minlength="8" required>
+            </div>
+
+            <button type="submit" class="site-btn" style="width:100%">Войти</button>
+        </form>
+
+        <div class="site-auth-card__footer">
+            Нет аккаунта? <a href="/register">Зарегистрироваться</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

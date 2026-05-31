@@ -1,0 +1,77 @@
+{% extends 'layouts/base.twig' %}
+
+{% block title %}{{ page_title|default('Все публикации') }} — {{ site_name|default('CMS-Flexi') }}{% endblock %}
+
+{% block breadcrumb %}
+<div class="container">
+    <div class="headline bg0 flex-wr-sb-c p-rl-20 p-tb-8">
+        <div class="f2-s-1 p-r-30 m-tb-6">
+            <a href="/" class="breadcrumb-item f1-s-3 cl9">Главная</a>
+            {% if category is defined %}
+                <span class="breadcrumb-item f1-s-3 cl9">Категория: {{ category.name }}</span>
+            {% elseif tag is defined %}
+                <span class="breadcrumb-item f1-s-3 cl9">Тег: {{ tag.name }}</span>
+            {% else %}
+                <span class="breadcrumb-item f1-s-3 cl9">Все публикации</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="bg0 p-t-30 p-b-90">
+    <div class="container">
+
+        <div class="how2 how2-cl4 flex-s-c m-b-25">
+            <h3 class="f1-m-2 cl3 tab01-title">{{ page_title|default('Все публикации') }}</h3>
+            {% if subtitle is defined %}
+                <span class="f1-s-1 cl6 m-l-15">{{ subtitle }}</span>
+            {% endif %}
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 col-lg-9 p-b-30">
+
+                {% set switcher_base = pagination.base_url|default('/posts') %}
+                {% include 'partials/layout-switcher.twig' with { layout: layout|default('grid'), base_url: switcher_base } %}
+
+                {% if posts|length == 0 %}
+                    <div class="bg2 p-rl-30 p-tb-25">
+                        <p class="f1-s-1 cl6 m-0">Пока нет публикаций.</p>
+                    </div>
+                {% elseif layout == 'list' or layout == 'left' %}
+                    {# одна колонка #}
+                    <div>
+                        {% for post in posts %}
+                            {% if layout == 'left' %}
+                                {% include 'partials/post-card-list.twig' with { post: post } %}
+                            {% else %}
+                                <div class="p-b-30 how-bor3">
+                                    {% include 'partials/post-card.twig' with { post: post } %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {# grid: 2 колонки #}
+                    <div class="row">
+                        {% for post in posts %}
+                            <div class="col-sm-6 col-md-6 p-b-30">
+                                {% include 'partials/post-card.twig' with { post: post } %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% include 'partials/pagination.twig' %}
+            </div>
+
+            <div class="col-md-4 col-lg-3 p-b-30">
+                {% include 'layouts/sidebar.twig' %}
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

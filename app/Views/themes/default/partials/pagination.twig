@@ -1,0 +1,30 @@
+{# постраничная навигация #}
+{% if pagination is defined and pagination.total_pages > 1 %}
+    {% set extra = '' %}
+    {% for k, v in pagination.query_extra|default({}) %}
+        {% if v %}{% set extra = extra ~ '&' ~ k ~ '=' ~ v %}{% endif %}
+    {% endfor %}
+
+    <nav class="flex-wr-c-c p-t-15">
+        {% if pagination.has_prev %}
+            <a href="{{ pagination.base_url }}?page={{ pagination.current - 1 }}{{ extra }}"
+               class="flex-c-c size-w-3 size-h-2 bo-1-rad-15 bocl12 f1-s-3 cl8 hov-btn2 trans-03 p-rl-10 p-tb-5 m-rl-5">
+                ← Назад
+            </a>
+        {% endif %}
+
+        {% for page in 1..pagination.total_pages %}
+            <a href="{{ pagination.base_url }}?page={{ page }}{{ extra }}"
+               class="flex-c-c size-w-3 size-h-2 bo-1-rad-15 bocl12 f1-s-3 cl8 hov-btn2 trans-03 p-rl-10 p-tb-5 m-rl-5 {{ page == pagination.current ? 'how-active1' : '' }}">
+                {{ page }}
+            </a>
+        {% endfor %}
+
+        {% if pagination.has_next %}
+            <a href="{{ pagination.base_url }}?page={{ pagination.current + 1 }}{{ extra }}"
+               class="flex-c-c size-w-3 size-h-2 bo-1-rad-15 bocl12 f1-s-3 cl8 hov-btn2 trans-03 p-rl-10 p-tb-5 m-rl-5">
+                Вперёд →
+            </a>
+        {% endif %}
+    </nav>
+{% endif %}

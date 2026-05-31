@@ -1,0 +1,17 @@
+{# переключатель макета сетки/списка #}
+{% set base = base_url|default('/posts') %}
+<div class="flex-wr-s-c p-b-30">
+    <span class="f1-s-3 cl8 m-r-15">Вид:</span>
+    <a href="{{ base }}?layout=grid"
+       class="flex-c-c size-h-2 bo-1-rad-15 bocl12 f1-s-3 cl8 hov-btn2 trans-03 p-rl-15 p-tb-5 m-rl-5 {{ layout == 'grid' ? 'how-active1' : '' }}">
+        Сетка
+    </a>
+    <a href="{{ base }}?layout=list"
+       class="flex-c-c size-h-2 bo-1-rad-15 bocl12 f1-s-3 cl8 hov-btn2 trans-03 p-rl-15 p-tb-5 m-rl-5 {{ layout == 'list' ? 'how-active1' : '' }}">
+        Список
+    </a>
+    <a href="{{ base }}?layout=left"
+       class="flex-c-c size-h-2 bo-1-rad-15 bocl12 f1-s-3 cl8 hov-btn2 trans-03 p-rl-15 p-tb-5 m-rl-5 {{ layout == 'left' ? 'how-active1' : '' }}">
+        Фото слева
+    </a>
+</div>

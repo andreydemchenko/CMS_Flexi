@@ -1,10 +1,10 @@
-{# карточка поста: изображение сверху, категория, заголовок, автор, дата #}
-<article class="flex-col-c-s">
-    <a href="/post/{{ post.slug }}" class="wrap-pic-w hov1 trans-03 w-100">
+{# карточка поста: изображение слева, текст справа #}
+<article class="flex-wr-s-s p-b-30 how-bor3">
+    <a href="/post/{{ post.slug }}" class="size-w-13 wrap-pic-w hov1 trans-03">
         <img src="{{ post.featured_image|default('/assets/images/post-01.jpg') }}" alt="{{ post.title }}">
     </a>
 
-    <div class="p-t-16">
+    <div class="size-w-14 p-l-30 p-l-0-sr575 p-t-20-sr575">
         {% if post.category_slug %}
             <a href="/category/{{ post.category_slug }}"
                class="f1-s-10 cl2 hov-cl10 trans-03 text-uppercase">
@@ -25,7 +25,11 @@
         </span>
 
         {% if post.excerpt %}
-            <p class="f1-s-1 cl6 p-t-10">{{ post.excerpt }}</p>
+            <p class="f1-s-1 cl6 p-t-15">{{ post.excerpt }}</p>
         {% endif %}
+
+        <a href="/post/{{ post.slug }}" class="f1-s-3 cl10 hov-cl9 trans-03 dis-inline-block p-t-15">
+            Читать далее →
+        </a>
     </div>
 </article>

@@ -1,0 +1,64 @@
+{% extends 'layouts/base.twig' %}
+
+{% block title %}Регистрация — {{ site_name|default('CMS-Flexi') }}{% endblock %}
+
+{% block content %}
+<div class="site-auth-page">
+    <div class="site-auth-card site-auth-card--wide">
+        <h1 class="site-auth-card__title">Регистрация</h1>
+        <p class="site-auth-card__subtitle">Заведите аккаунт, чтобы комментировать и подписываться на материалы.</p>
+
+        {% if errors|default([])|length %}
+            <div class="site-alert site-alert--error">
+                <ul>
+                    {% for err in errors %}
+                        <li>{{ err }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <form method="post" action="/register">
+            <div class="site-form-row">
+                <label for="reg-username" class="site-label">Username</label>
+                <input id="reg-username" class="site-input"
+                       type="text" name="username"
+                       value="{{ old.username|default('') }}"
+                       minlength="3" maxlength="64" required autofocus>
+                <div class="site-form-help">Латиница, цифры, символы <code>_ . -</code></div>
+            </div>
+
+            <div class="site-form-row">
+                <label for="reg-display" class="site-label">
+                    Имя для отображения <span style="color:var(--site-muted);font-weight:400">(необязательно)</span>
+                </label>
+                <input id="reg-display" class="site-input"
+                       type="text" name="display_name"
+                       value="{{ old.display_name|default('') }}"
+                       maxlength="120">
+            </div>
+
+            <div class="site-form-row">
+                <label for="reg-email" class="site-label">Email</label>
+                <input id="reg-email" class="site-input"
+                       type="email" name="email"
+                       value="{{ old.email|default('') }}" required>
+            </div>
+
+            <div class="site-form-row">
+                <label for="reg-password" class="site-label">Пароль</label>
+                <input id="reg-password" class="site-input"
+                       type="password" name="password"
+                       minlength="8" required>
+                <div class="site-form-help">Минимум 8 символов.</div>
+            </div>
+
+            <button type="submit" class="site-btn" style="width:100%">Создать аккаунт</button>
+        </form>
+
+        <div class="site-auth-card__footer">
+            Уже есть аккаунт? <a href="/login">Войти</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

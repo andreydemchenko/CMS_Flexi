@@ -1,4 +1,5 @@
 {% extends 'layouts/base.twig' %}
+{% import 'partials/comment.twig' as cm %}
 
 {% block title %}{{ post.title }} — {{ site_name|default('CMS-Flexi') }}{% endblock %}
 
@@ -7,9 +8,9 @@
     <div class="headline bg0 flex-wr-sb-c p-rl-20 p-tb-8">
         <div class="f2-s-1 p-r-30 m-tb-6">
             <a href="/" class="breadcrumb-item f1-s-3 cl9">Главная</a>
-            <a href="/category/{{ post.category_slug|default('news') }}" class="breadcrumb-item f1-s-3 cl9">
-                {{ post.category|default('Новости') }}
-            </a>
+            {% if post.category_slug %}
+                <a href="/category/{{ post.category_slug }}" class="breadcrumb-item f1-s-3 cl9">{{ post.category_name }}</a>
+            {% endif %}
             <span class="breadcrumb-item f1-s-3 cl9">{{ post.title }}</span>
         </div>
     </div>
@@ -23,31 +24,35 @@
 
             <div class="col-md-10 col-lg-8 p-b-30">
                 <article class="p-r-10 p-r-0-sr991">
-                    <div class="p-b-70">
-                        <a href="/category/{{ post.category_slug|default('news') }}"
-                           class="f1-s-10 cl2 hov-cl10 trans-03 text-uppercase">
-                            {{ post.category|default('Новости') }}
-                        </a>
+                    <div class="p-b-30">
+                        {% if post.category_slug %}
+                            <a href="/category/{{ post.category_slug }}"
+                               class="f1-s-10 cl2 hov-cl10 trans-03 text-uppercase">
+                                {{ post.category_name }}
+                            </a>
+                        {% endif %}
 
                         <h3 class="f1-l-3 cl2 p-b-16 p-t-33 respon2">{{ post.title }}</h3>
 
                         <div class="flex-wr-s-s p-b-40">
                             <span class="f1-s-3 cl8 m-r-15">
-                                <a href="#" class="f1-s-4 cl8 hov-cl10 trans-03">by {{ post.author|default('Anonymous') }}</a>
+                                <a href="#" class="f1-s-4 cl8 hov-cl10 trans-03">
+                                    by {{ post.author_name|default(post.author_username|default('Anonymous')) }}
+                                </a>
                                 <span class="m-rl-3">-</span>
-                                <span>{{ post.date }}</span>
+                                <span>{{ (post.published_at ?: post.created_at)|date('d M Y') }}</span>
                             </span>
 
                             <span class="f1-s-3 cl8 m-r-15">{{ post.views|default(0) }} просмотров</span>
 
                             <a href="#comments" class="f1-s-3 cl8 hov-cl10 trans-03 m-r-15">
-                                {{ (post.comments_count|default(0)) }} комментариев
+                                {{ comments_count|default(0) }} комментариев
                             </a>
                         </div>
 
-                        {% if post.image is defined %}
+                        {% if post.featured_image %}
                             <div class="wrap-pic-max-w p-b-30">
-                                <img src="{{ post.image }}" alt="{{ post.title }}">
+                                <img src="{{ post.featured_image }}" alt="{{ post.title }}">
                             </div>
                         {% endif %}
 
@@ -55,17 +60,81 @@
                             {{ post.content|raw }}
                         </div>
 
-                        {% if post.tags is defined and post.tags|length %}
+                        {% if post.tags|default([])|length %}
                             <div class="flex-wr-s-s p-t-15">
                                 <span class="f1-s-12 cl3 m-r-12">Теги:</span>
                                 {% for tag in post.tags %}
-                                    <a href="/tag/{{ tag }}"
-                                       class="f1-s-1 cl8 hov-cl10 trans-03 m-r-10">#{{ tag }}</a>
+                                    <a href="/tag/{{ tag.slug }}"
+                                       class="f1-s-1 cl8 hov-cl10 trans-03 m-r-10">#{{ tag.name }}</a>
                                 {% endfor %}
                             </div>
                         {% endif %}
                     </div>
                 </article>
+
+                {# ─── комментарии ─── #}
+                <div id="comments" class="p-t-40 how-bor3 p-b-30">
+                    <div class="how2 how2-cl4 flex-s-c m-b-30">
+                        <h3 class="f1-m-2 cl3 tab01-title">Комментарии ({{ comments_count|default(0) }})</h3>
+                    </div>
+
+                    {% if session.flash.comment is defined %}
+                        <div class="site-alert {{ session.flash.comment.type == 'success' ? 'site-alert--success' : 'site-alert--error' }}">
+                            {% if session.flash.comment.type == 'success' %}
+                                {{ session.flash.comment.message }}
+                            {% else %}
+                                <strong>Не удалось отправить:</strong>
+                                <ul>
+                                    {% for field, msg in session.flash.comment.errors %}
+                                        <li>{{ msg }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    {% if comments|length == 0 %}
+                        <p class="f1-s-1 cl6">Комментариев пока нет — будьте первым!</p>
+                    {% else %}
+                        {% for c in comments %}
+                            {{ cm.render(c, 0) }}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                {# ─── форма комментария ─── #}
+                <div id="comment-form" class="p-t-30">
+                    <div class="how2 how2-cl4 flex-s-c m-b-30">
+                        <h3 class="f1-m-2 cl3 tab01-title">Оставить комментарий</h3>
+                    </div>
+
+                    <form action="/post/{{ post.slug }}/comment" method="post">
+                        <input type="hidden" name="parent_id" id="parent_id" value="">
+
+                        {% if session.user_id is not defined %}
+                            <div class="row">
+                                <div class="col-md-6 site-form-row">
+                                    <label class="site-label" for="cmt-name">Имя *</label>
+                                    <input id="cmt-name" class="site-input"
+                                           type="text" name="author_name" required>
+                                </div>
+                                <div class="col-md-6 site-form-row">
+                                    <label class="site-label" for="cmt-email">Email *</label>
+                                    <input id="cmt-email" class="site-input"
+                                           type="email" name="author_email" required>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div class="site-form-row">
+                            <label class="site-label" for="cmt-content">Ваш комментарий *</label>
+                            <textarea id="cmt-content" class="site-textarea"
+                                      name="content" rows="6" required></textarea>
+                        </div>
+
+                        <button type="submit" class="site-btn">Отправить</button>
+                    </form>
+                </div>
             </div>
 
             <div class="col-md-10 col-lg-4 p-b-30">
@@ -75,4 +144,16 @@
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.querySelectorAll('.js-reply').forEach(function(link){
+        link.addEventListener('click', function(e){
+            var pid = this.dataset.parent;
+            var input = document.getElementById('parent_id');
+            if (input) input.value = pid || '';
+        });
+    });
+</script>
 {% endblock %}
