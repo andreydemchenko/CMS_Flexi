@@ -7,10 +7,13 @@
             <div class="content-topbar container h-100">
                 <div class="left-topbar">
                     <a href="/" class="left-topbar-item">Главная</a>
-                    <a href="/register" class="left-topbar-item">Регистрация</a>
                     {% if session.user_id is defined %}
+                        {% if current_user and current_user.role in ['admin', 'editor'] %}
+                            <a href="/admin" class="left-topbar-item" style="font-weight:600">⚙ Админка</a>
+                        {% endif %}
                         <a href="/logout" class="left-topbar-item">Выход</a>
                     {% else %}
+                        <a href="/register" class="left-topbar-item">Регистрация</a>
                         <a href="/login" class="left-topbar-item">Вход</a>
                     {% endif %}
                 </div>

@@ -1,0 +1,115 @@
+{% extends 'layouts/admin-base.twig' %}
+
+{% block title %}Дашборд{% endblock %}
+{% block breadcrumb %}<li class="breadcrumb-item active">Дашборд</li>{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>{{ stats.posts_total }}</h3>
+                <p>Записей всего</p>
+            </div>
+            <div class="icon"><i class="fas fa-newspaper"></i></div>
+            <a href="/admin/posts" class="small-box-footer">Управлять <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>{{ stats.posts_published }}</h3>
+                <p>Опубликовано</p>
+            </div>
+            <div class="icon"><i class="fas fa-check-circle"></i></div>
+            <a href="/admin/posts?status=published" class="small-box-footer">Смотреть <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>{{ stats.comments_pending }}</h3>
+                <p>Комментариев на модерации</p>
+            </div>
+            <div class="icon"><i class="far fa-comment-dots"></i></div>
+            <a href="/admin/comments?status=pending" class="small-box-footer">Модерировать <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3>{{ stats.users_total }}</h3>
+                <p>Пользователей</p>
+            </div>
+            <div class="icon"><i class="fas fa-users"></i></div>
+            <a href="/admin/users" class="small-box-footer">Управлять <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Сводка</h3>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <tbody>
+                        <tr><td>Записей всего</td><td class="text-right"><strong>{{ stats.posts_total }}</strong></td></tr>
+                        <tr><td>Опубликовано</td><td class="text-right"><span class="badge badge-published p-1 px-2">{{ stats.posts_published }}</span></td></tr>
+                        <tr><td>Черновиков</td><td class="text-right"><span class="badge badge-draft p-1 px-2">{{ stats.posts_draft }}</span></td></tr>
+                        <tr><td>Категорий</td><td class="text-right"><strong>{{ stats.categories_total }}</strong></td></tr>
+                        <tr><td>Комментариев всего</td><td class="text-right"><strong>{{ stats.comments_total }}</strong></td></tr>
+                        <tr><td>На модерации</td><td class="text-right"><span class="badge badge-pending p-1 px-2">{{ stats.comments_pending }}</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Последние комментарии</h3>
+                <div class="card-tools">
+                    <a href="/admin/comments" class="btn btn-tool"><i class="fas fa-list"></i> Все</a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-striped table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Автор</th>
+                            <th>Запись</th>
+                            <th>Текст</th>
+                            <th>Статус</th>
+                            <th>Дата</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in recent_comments %}
+                            <tr>
+                                <td>{{ c.author_name|default(c.user_username|default('—')) }}</td>
+                                <td>
+                                    {% if c.post_slug %}
+                                        <a href="/post/{{ c.post_slug }}" target="_blank">{{ c.post_title|slice(0, 40) }}{% if c.post_title|length > 40 %}…{% endif %}</a>
+                                    {% else %}<em>—</em>{% endif %}
+                                </td>
+                                <td class="text-muted small">{{ c.content|slice(0, 80) }}{% if c.content|length > 80 %}…{% endif %}</td>
+                                <td><span class="badge badge-{{ c.status }} p-1 px-2">{{ LABELS.comment_status[c.status]|default(c.status) }}</span></td>
+                                <td class="text-muted small">{{ c.created_at|date('d.m.Y H:i') }}</td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="5" class="text-center text-muted p-3">Пока нет комментариев.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

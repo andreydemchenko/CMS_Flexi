@@ -1,0 +1,68 @@
+{% extends 'layouts/admin-base.twig' %}
+
+{% block title %}Пользователи{% endblock %}
+{% block breadcrumb %}<li class="breadcrumb-item active">Пользователи</li>{% endblock %}
+
+{% block content %}
+<div class="filter-bar d-flex justify-content-end">
+    <a href="/admin/users/create" class="btn btn-success btn-sm">
+        <i class="fas fa-user-plus mr-1"></i> Новый пользователь
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="thead-light">
+                <tr>
+                    <th style="width:60px">ID</th>
+                    <th>Логин</th>
+                    <th>Имя</th>
+                    <th>Email</th>
+                    <th style="width:140px">Роль</th>
+                    <th style="width:80px">Активен</th>
+                    <th style="width:130px">Создан</th>
+                    <th style="width:160px">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                    <tr class="{{ u.id == current_user.id ? 'table-info' : '' }}">
+                        <td class="text-muted">{{ u.id }}</td>
+                        <td><strong>{{ u.username }}</strong></td>
+                        <td>{{ u.display_name|default('—') }}</td>
+                        <td class="small">{{ u.email }}</td>
+                        <td>
+                            <span class="badge badge-{{ u.role == 'admin' ? 'danger' : (u.role == 'editor' ? 'warning' : 'secondary') }} p-1 px-2">
+                                {{ LABELS.user_role[u.role]|default(u.role) }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if u.is_active %}
+                                <i class="fas fa-check-circle text-success"></i>
+                            {% else %}
+                                <i class="fas fa-times-circle text-muted"></i>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted small">{{ u.created_at|date('d.m.Y') }}</td>
+                        <td class="table-actions">
+                            <a href="/admin/users/{{ u.id }}/edit" class="btn btn-xs btn-primary">
+                                <i class="fas fa-edit"></i> Изменить
+                            </a>
+                            {% if u.id != current_user.id %}
+                                <form action="/admin/users/{{ u.id }}/delete" method="post" class="d-inline"
+                                      onsubmit="return confirm('Удалить пользователя «{{ u.username|e('js') }}»?');">
+                                    {{ csrf_field() }}
+                                    <button class="btn btn-xs btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="8" class="text-center text-muted p-3">Пользователей нет.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

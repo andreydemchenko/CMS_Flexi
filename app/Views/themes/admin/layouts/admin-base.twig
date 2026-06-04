@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Админка{% endblock %} — {{ site_name|default('CMS-Flexi') }}</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+
+    <style>
+        .brand-link { padding: 12px 18px; }
+        .brand-text strong { color: #ffc107; }
+        .nav-sidebar .nav-link.active { background: #007bff; color: #fff; }
+        .small-box .icon { top: 10px; }
+        .badge-pending  { background: #ffc107; color: #212529; }
+        .badge-approved { background: #28a745; color: #fff;   }
+        .badge-spam     { background: #dc3545; color: #fff;   }
+        .badge-trash    { background: #6c757d; color: #fff;   }
+        .badge-draft    { background: #6c757d; color: #fff;   }
+        .badge-published{ background: #28a745; color: #fff;   }
+        .badge-archived { background: #343a40; color: #fff;   }
+        .card-title { font-weight: 600; }
+        .form-help { font-size: 12px; color: #6c757d; }
+        .table-actions .btn { margin-right: 4px; }
+        .filter-bar { background: #fff; padding: 12px 16px; border-radius: 4px; margin-bottom: 18px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+    </style>
+
+    {% block styles %}{% endblock %}
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+    {# ─── TOP NAVBAR ─── #}
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" data-widget="pushmenu" href="#" role="button">
+                    <i class="fas fa-bars"></i>
+                </a>
+            </li>
+            <li class="nav-item d-none d-sm-inline-block">
+                <a href="/" target="_blank" class="nav-link">
+                    <i class="fas fa-external-link-alt mr-1"></i> Открыть сайт
+                </a>
+            </li>
+        </ul>
+
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link" data-toggle="dropdown" href="#">
+                    <i class="far fa-user-circle mr-1"></i>
+                    {{ current_user.display_name|default(current_user.username|default('user')) }}
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <span class="dropdown-item-text text-muted small">
+                        {{ current_user.email }}<br>
+                        Роль: <strong>{{ current_user.role }}</strong>
+                    </span>
+                    <div class="dropdown-divider"></div>
+                    <a href="/logout" class="dropdown-item text-danger">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Выйти
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    {# ─── SIDEBAR ─── #}
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <a href="/admin" class="brand-link">
+            <span class="brand-text font-weight-light">
+                <strong>CMS</strong>-Flexi <small class="text-muted">admin</small>
+            </span>
+        </a>
+
+        <div class="sidebar">
+            <nav class="mt-2">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+                    {% set p = current_path|default('') %}
+                    <li class="nav-item">
+                        <a href="/admin" class="nav-link {{ p == '/admin' ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tachometer-alt"></i><p>Дашборд</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/posts" class="nav-link {{ p starts with '/admin/posts' ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-newspaper"></i><p>Записи</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/categories" class="nav-link {{ p starts with '/admin/categories' ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-folder"></i><p>Категории</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/tags" class="nav-link {{ p starts with '/admin/tags' ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-tags"></i><p>Теги</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/comments" class="nav-link {{ p starts with '/admin/comments' ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-comments"></i>
+                            <p>Комментарии</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/users" class="nav-link {{ p starts with '/admin/users' ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-users"></i><p>Пользователи</p>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </aside>
+
+    {# ─── CONTENT WRAPPER ─── #}
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h1>{% block page_title %}{{ self.title() }}{% endblock %}</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="/admin">Главная</a></li>
+                            {% block breadcrumb %}{% endblock %}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content">
+            <div class="container-fluid">
+                {% if flash %}
+                    <div class="alert alert-{{ flash.type == 'success' ? 'success' : 'danger' }} alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        {{ flash.message }}
+                    </div>
+                {% endif %}
+
+                {% block content %}{% endblock %}
+            </div>
+        </section>
+    </div>
+
+    <footer class="main-footer text-sm">
+        <strong>CMS-Flexi</strong> &copy; {{ "now"|date('Y') }} —
+        <span class="text-muted">панель администратора</span>
+    </footer>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

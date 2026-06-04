@@ -1,0 +1,89 @@
+{% extends 'layouts/admin-base.twig' %}
+
+{% block title %}Теги{% endblock %}
+{% block breadcrumb %}<li class="breadcrumb-item active">Теги</li>{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header"><h3 class="card-title">Список тегов</h3></div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th style="width:60px">ID</th>
+                            <th>Название</th>
+                            <th>Адрес</th>
+                            <th style="width:90px">Записей</th>
+                            <th style="width:170px">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in tags %}
+                            <tr>
+                                <td class="text-muted">{{ t.id }}</td>
+                                <td><strong>{{ t.name }}</strong></td>
+                                <td class="text-muted small">{{ t.slug }}</td>
+                                <td><span class="badge badge-secondary p-1 px-2">{{ t.posts_count|default(0) }}</span></td>
+                                <td class="table-actions">
+                                    <a href="/admin/tags?edit={{ t.id }}" class="btn btn-xs btn-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="/admin/tags/{{ t.id }}/delete" method="post" class="d-inline"
+                                          onsubmit="return confirm('Удалить тег «{{ t.name|e('js') }}»?');">
+                                        {{ csrf_field() }}
+                                        <button class="btn btn-xs btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="5" class="text-center text-muted p-3">Тегов нет.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        {% set is_edit = editing is not null %}
+        {% set action  = is_edit ? '/admin/tags/' ~ editing.id : '/admin/tags' %}
+        <div class="card card-{{ is_edit ? 'warning' : 'primary' }}">
+            <div class="card-header">
+                <h3 class="card-title">
+                    {{ is_edit ? 'Редактировать «' ~ editing.name ~ '»' : 'Новый тег' }}
+                </h3>
+            </div>
+            <form method="post" action="{{ action }}">
+                {{ csrf_field() }}
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="tag-name">Название *</label>
+                        <input type="text" id="tag-name" name="name"
+                               class="form-control {{ errors.name is defined ? 'is-invalid' : '' }}"
+                               value="{{ old.name|default(editing.name|default('')) }}"
+                               maxlength="80" required>
+                        {% if errors.name is defined %}<div class="invalid-feedback">{{ errors.name }}</div>{% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="tag-slug">Адрес <small class="text-muted">(латиницей)</small></label>
+                        <input type="text" id="tag-slug" name="slug"
+                               class="form-control {{ errors.slug is defined ? 'is-invalid' : '' }}"
+                               value="{{ old.slug|default(editing.slug|default('')) }}"
+                               maxlength="100">
+                        <small class="form-help">Часть URL после <code>/tag/</code>. Если пустое — создастся из названия.</small>
+                        {% if errors.slug is defined %}<div class="invalid-feedback">{{ errors.slug }}</div>{% endif %}
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-{{ is_edit ? 'warning' : 'primary' }}">
+                        <i class="fas fa-save mr-1"></i> {{ is_edit ? 'Обновить' : 'Создать' }}
+                    </button>
+                    {% if is_edit %}<a href="/admin/tags" class="btn btn-link text-muted">Отмена</a>{% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

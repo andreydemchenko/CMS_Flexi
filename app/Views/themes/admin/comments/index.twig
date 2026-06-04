@@ -1,0 +1,96 @@
+{% extends 'layouts/admin-base.twig' %}
+
+{% block title %}Комментарии{% endblock %}
+{% block breadcrumb %}<li class="breadcrumb-item active">Комментарии</li>{% endblock %}
+
+{% block content %}
+<div class="filter-bar">
+    <div class="btn-group btn-group-sm">
+        <a href="/admin/comments" class="btn btn-{{ filter.status is null ? 'primary' : 'outline-primary' }}">
+            Все <span class="badge badge-light ml-1">{{ counts.all }}</span>
+        </a>
+        <a href="/admin/comments?status=pending" class="btn btn-{{ filter.status == 'pending' ? 'warning' : 'outline-warning' }}">
+            На модерации <span class="badge badge-light ml-1">{{ counts.pending }}</span>
+        </a>
+        <a href="/admin/comments?status=approved" class="btn btn-{{ filter.status == 'approved' ? 'success' : 'outline-success' }}">
+            Одобрено <span class="badge badge-light ml-1">{{ counts.approved }}</span>
+        </a>
+        <a href="/admin/comments?status=spam" class="btn btn-{{ filter.status == 'spam' ? 'danger' : 'outline-danger' }}">
+            Спам <span class="badge badge-light ml-1">{{ counts.spam }}</span>
+        </a>
+        <a href="/admin/comments?status=trash" class="btn btn-{{ filter.status == 'trash' ? 'secondary' : 'outline-secondary' }}">
+            Корзина <span class="badge badge-light ml-1">{{ counts.trash }}</span>
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="thead-light">
+                <tr>
+                    <th style="width:60px">ID</th>
+                    <th style="width:200px">Автор</th>
+                    <th>Комментарий</th>
+                    <th style="width:200px">Запись</th>
+                    <th style="width:100px">Статус</th>
+                    <th style="width:130px">Дата</th>
+                    <th style="width:170px">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in comments %}
+                    <tr>
+                        <td class="text-muted">{{ c.id }}</td>
+                        <td class="small">
+                            <strong>{{ c.author_name|default(c.user_username|default('—')) }}</strong>
+                            {% if c.author_email %}<br><span class="text-muted">{{ c.author_email }}</span>{% endif %}
+                        </td>
+                        <td class="small">{{ c.content|slice(0, 180) }}{% if c.content|length > 180 %}…{% endif %}</td>
+                        <td class="small">
+                            {% if c.post_slug %}
+                                <a href="/post/{{ c.post_slug }}" target="_blank">{{ c.post_title|slice(0, 30) }}{% if c.post_title|length > 30 %}…{% endif %}</a>
+                            {% else %}<em class="text-muted">—</em>{% endif %}
+                        </td>
+                        <td><span class="badge badge-{{ c.status }} p-1 px-2">{{ LABELS.comment_status[c.status]|default(c.status) }}</span></td>
+                        <td class="text-muted small">{{ c.created_at|date('d.m.Y H:i') }}</td>
+                        <td class="table-actions">
+                            {% if c.status != 'approved' %}
+                                <form action="/admin/comments/{{ c.id }}/approve" method="post" class="d-inline">
+                                    {{ csrf_field() }}
+                                    <input type="hidden" name="_back" value="/admin/comments{{ filter.status ? '?status=' ~ filter.status : '' }}">
+                                    <button class="btn btn-xs btn-success"><i class="fas fa-check"></i></button>
+                                </form>
+                            {% endif %}
+                            <form action="/admin/comments/{{ c.id }}/delete" method="post" class="d-inline"
+                                  onsubmit="return confirm('Удалить комментарий?');">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="_back" value="/admin/comments{{ filter.status ? '?status=' ~ filter.status : '' }}">
+                                <button class="btn btn-xs btn-outline-danger"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="7" class="text-center text-muted p-3">Комментариев в этой выборке нет.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if pagination.total_pages > 1 %}
+        <div class="card-footer clearfix">
+            <ul class="pagination pagination-sm m-0 float-right">
+                {% for page in 1..pagination.total_pages %}
+                    {% set qs = [] %}
+                    {% if filter.status %}{% set qs = qs|merge(['status=' ~ filter.status]) %}{% endif %}
+                    {% set qs = qs|merge(['page=' ~ page]) %}
+                    <li class="page-item {{ page == pagination.current ? 'active' : '' }}">
+                        <a class="page-link" href="?{{ qs|join('&') }}">{{ page }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+            <span class="text-muted small">Всего: {{ pagination.total }}</span>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

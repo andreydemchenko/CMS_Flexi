@@ -83,4 +83,24 @@ class User
     {
         return $this->db->execute('DELETE FROM users WHERE id = ?', [$id]) > 0;
     }
+
+    public function totalCount(): int
+    {
+        $row = $this->db->fetchOne('SELECT COUNT(*) AS c FROM users');
+        return (int) ($row['c'] ?? 0);
+    }
+
+    // есть ли уже пользователь с таким username/email (исключая редактируемого)
+    public function isTaken(string $field, string $value, ?int $excludeId = null): bool
+    {
+        if (!in_array($field, ['username', 'email'], true)) {
+            return false;
+        }
+        if ($excludeId === null) {
+            $row = $this->db->fetchOne("SELECT 1 AS x FROM users WHERE {$field} = ? LIMIT 1", [$value]);
+        } else {
+            $row = $this->db->fetchOne("SELECT 1 AS x FROM users WHERE {$field} = ? AND id <> ? LIMIT 1", [$value, $excludeId]);
+        }
+        return $row !== null;
+    }
 }

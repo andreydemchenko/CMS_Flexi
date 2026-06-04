@@ -116,6 +116,75 @@ class Post
         return (int) ($row['c'] ?? 0);
     }
 
+    // глобальный счётчик без фильтра по статусу
+    public function getTotalCountAny(): int
+    {
+        $row = $this->db->fetchOne('SELECT COUNT(*) AS c FROM posts');
+        return (int) ($row['c'] ?? 0);
+    }
+
+    // выборка для админки: фильтр по любому статусу/категории + пагинация
+    public function getForAdmin(?string $status, ?int $categoryId, int $limit, int $offset): array
+    {
+        $limit  = max(1, $limit);
+        $offset = max(0, $offset);
+
+        $where  = [];
+        $params = [];
+        if ($status !== null && $status !== '') {
+            $where[]  = 'p.status = ?';
+            $params[] = $status;
+        }
+        if ($categoryId !== null && $categoryId > 0) {
+            $where[]  = 'p.category_id = ?';
+            $params[] = $categoryId;
+        }
+
+        $sql = self::SELECT_WITH_JOINS
+            . ($where ? ' WHERE ' . implode(' AND ', $where) : '')
+            . ' ORDER BY COALESCE(p.published_at, p.created_at) DESC, p.id DESC'
+            . ' LIMIT ' . $limit . ' OFFSET ' . $offset;
+
+        return $this->db->fetchAll($sql, $params);
+    }
+
+    public function countForAdmin(?string $status, ?int $categoryId): int
+    {
+        $where  = [];
+        $params = [];
+        if ($status !== null && $status !== '') {
+            $where[]  = 'status = ?';
+            $params[] = $status;
+        }
+        if ($categoryId !== null && $categoryId > 0) {
+            $where[]  = 'category_id = ?';
+            $params[] = $categoryId;
+        }
+        $sql = 'SELECT COUNT(*) AS c FROM posts'
+            . ($where ? ' WHERE ' . implode(' AND ', $where) : '');
+
+        $row = $this->db->fetchOne($sql, $params);
+        return (int) ($row['c'] ?? 0);
+    }
+
+    // быстрая проверка уникальности slug (исключая указанный id при редактировании)
+    public function slugExists(string $slug, ?int $excludeId = null): bool
+    {
+        if ($excludeId === null) {
+            $row = $this->db->fetchOne('SELECT 1 AS x FROM posts WHERE slug = ? LIMIT 1', [$slug]);
+        } else {
+            $row = $this->db->fetchOne('SELECT 1 AS x FROM posts WHERE slug = ? AND id <> ? LIMIT 1', [$slug, $excludeId]);
+        }
+        return $row !== null;
+    }
+
+    // id тегов поста — для предзаполнения формы редактирования
+    public function getTagIds(int $postId): array
+    {
+        $rows = $this->db->fetchAll('SELECT tag_id FROM post_tags WHERE post_id = ?', [$postId]);
+        return array_map(static fn($r) => (int) $r['tag_id'], $rows);
+    }
+
     public function getCountByCategory(int $categoryId): int
     {
         $row = $this->db->fetchOne(

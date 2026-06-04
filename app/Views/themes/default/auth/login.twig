@@ -19,6 +19,7 @@
         {% endif %}
 
         <form method="post" action="/login">
+            {{ csrf_field() }}
             <div class="site-form-row">
                 <label for="login-email" class="site-label">Email</label>
                 <input id="login-email" class="site-input"

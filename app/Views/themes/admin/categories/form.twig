@@ -1,0 +1,68 @@
+{# форма создания/редактирования категории — показывается в правой колонке index.twig #}
+{% set is_edit = editing is not null %}
+{% set action  = is_edit ? '/admin/categories/' ~ editing.id : '/admin/categories' %}
+
+<div class="card card-{{ is_edit ? 'warning' : 'primary' }}">
+    <div class="card-header">
+        <h3 class="card-title">
+            {% if is_edit %}
+                Редактировать «{{ editing.name }}»
+            {% else %}
+                Новая категория
+            {% endif %}
+        </h3>
+    </div>
+    <form method="post" action="{{ action }}">
+        {{ csrf_field() }}
+        <div class="card-body">
+            <div class="form-group">
+                <label for="cat-name">Название *</label>
+                <input type="text" id="cat-name" name="name"
+                       class="form-control {{ errors.name is defined ? 'is-invalid' : '' }}"
+                       value="{{ old.name|default(editing.name|default('')) }}"
+                       maxlength="120" required>
+                {% if errors.name is defined %}<div class="invalid-feedback">{{ errors.name }}</div>{% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="cat-slug">Адрес <small class="text-muted">(латиницей)</small></label>
+                <input type="text" id="cat-slug" name="slug"
+                       class="form-control {{ errors.slug is defined ? 'is-invalid' : '' }}"
+                       value="{{ old.slug|default(editing.slug|default('')) }}"
+                       maxlength="160">
+                <small class="form-help">Часть URL после <code>/category/</code>. Если пустое — создастся из названия.</small>
+                {% if errors.slug is defined %}<div class="invalid-feedback">{{ errors.slug }}</div>{% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="cat-parent">Родительская категория</label>
+                <select id="cat-parent" name="parent_id" class="form-control">
+                    <option value="">— нет —</option>
+                    {% for c in all_for_parent %}
+                        {% if not is_edit or c.id != editing.id %}
+                            <option value="{{ c.id }}"
+                                {{ (old.parentId|default(editing.parent_id|default(0))) == c.id ? 'selected' : '' }}>
+                                {{ c.name }}
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                {% if errors.parent_id is defined %}<small class="text-danger d-block">{{ errors.parent_id }}</small>{% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="cat-desc">Описание</label>
+                <textarea id="cat-desc" name="description" rows="3"
+                          class="form-control">{{ old.description|default(editing.description|default('')) }}</textarea>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-{{ is_edit ? 'warning' : 'primary' }}">
+                <i class="fas fa-save mr-1"></i> {{ is_edit ? 'Обновить' : 'Создать' }}
+            </button>
+            {% if is_edit %}
+                <a href="/admin/categories" class="btn btn-link text-muted">Отмена</a>
+            {% endif %}
+        </div>
+    </form>
+</div>

@@ -49,6 +49,18 @@ class AuthController extends BaseController
         session_regenerate_id(true);
         $_SESSION['user_id'] = (int) $user['id'];
 
+        // куда вернуть: 1) intended URL (если шли куда-то под гейтом)
+        //               2) /admin для admin/editor
+        //               3) / для остальных
+        $intended = $_SESSION['intended_url'] ?? null;
+        unset($_SESSION['intended_url']);
+
+        if (is_string($intended) && str_starts_with($intended, '/')) {
+            return $this->redirect($intended);
+        }
+        if (in_array($user['role'] ?? '', ['admin', 'editor'], true)) {
+            return $this->redirect('/admin');
+        }
         return $this->redirect('/');
     }
 

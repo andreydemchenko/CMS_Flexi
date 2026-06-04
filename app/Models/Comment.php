@@ -63,6 +63,62 @@ class Comment
         return $this->db->execute('DELETE FROM comments WHERE id = ?', [$id]) > 0;
     }
 
+    // для админки: список с фильтром по статусу + пагинация + join к посту/пользователю
+    public function getForAdmin(?string $status, int $limit, int $offset): array
+    {
+        $limit  = max(1, $limit);
+        $offset = max(0, $offset);
+
+        $where  = '';
+        $params = [];
+        if ($status !== null && $status !== '') {
+            $where    = ' WHERE c.status = ?';
+            $params[] = $status;
+        }
+
+        $sql = 'SELECT c.*,
+                       p.title AS post_title,
+                       p.slug  AS post_slug,
+                       u.username AS user_username
+                  FROM comments c
+                  LEFT JOIN posts p ON p.id = c.post_id
+                  LEFT JOIN users u ON u.id = c.user_id'
+            . $where
+            . ' ORDER BY c.created_at DESC, c.id DESC LIMIT ' . $limit . ' OFFSET ' . $offset;
+
+        return $this->db->fetchAll($sql, $params);
+    }
+
+    public function countForAdmin(?string $status): int
+    {
+        $where  = '';
+        $params = [];
+        if ($status !== null && $status !== '') {
+            $where    = ' WHERE status = ?';
+            $params[] = $status;
+        }
+        $row = $this->db->fetchOne('SELECT COUNT(*) AS c FROM comments' . $where, $params);
+        return (int) ($row['c'] ?? 0);
+    }
+
+    public function totalCount(): int
+    {
+        $row = $this->db->fetchOne('SELECT COUNT(*) AS c FROM comments');
+        return (int) ($row['c'] ?? 0);
+    }
+
+    public function getRecent(int $limit = 5): array
+    {
+        $limit = max(1, $limit);
+        return $this->db->fetchAll(
+            'SELECT c.*, p.title AS post_title, p.slug AS post_slug
+               FROM comments c
+               LEFT JOIN posts p ON p.id = c.post_id
+              ORDER BY c.created_at DESC, c.id DESC
+              LIMIT ' . $limit
+        );
+    }
+
     public function countByPost(int $postId, string $status = 'approved'): int
     {
         $row = $this->db->fetchOne(

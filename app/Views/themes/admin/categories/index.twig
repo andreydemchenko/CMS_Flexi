@@ -1,0 +1,57 @@
+{% extends 'layouts/admin-base.twig' %}
+
+{% block title %}Категории{% endblock %}
+{% block breadcrumb %}<li class="breadcrumb-item active">Категории</li>{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header"><h3 class="card-title">Список</h3></div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th style="width:60px">ID</th>
+                            <th>Название</th>
+                            <th>Адрес</th>
+                            <th>Родитель</th>
+                            <th style="width:90px">Записей</th>
+                            <th style="width:170px">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in categories %}
+                            <tr>
+                                <td class="text-muted">{{ c.id }}</td>
+                                <td><strong>{{ c.name }}</strong></td>
+                                <td class="text-muted small">{{ c.slug }}</td>
+                                <td class="small">
+                                    {% if c.parent_id %}#{{ c.parent_id }}{% else %}—{% endif %}
+                                </td>
+                                <td><span class="badge badge-secondary p-1 px-2">{{ c.posts_count|default(0) }}</span></td>
+                                <td class="table-actions">
+                                    <a href="/admin/categories?edit={{ c.id }}" class="btn btn-xs btn-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="/admin/categories/{{ c.id }}/delete" method="post" class="d-inline"
+                                          onsubmit="return confirm('Удалить категорию «{{ c.name|e('js') }}»?');">
+                                        {{ csrf_field() }}
+                                        <button class="btn btn-xs btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="6" class="text-center text-muted p-3">Категорий нет.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        {% include 'categories/form.twig' %}
+    </div>
+</div>
+{% endblock %}

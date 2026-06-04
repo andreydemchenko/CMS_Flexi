@@ -109,6 +109,7 @@
                     </div>
 
                     <form action="/post/{{ post.slug }}/comment" method="post">
+                        {{ csrf_field() }}
                         <input type="hidden" name="parent_id" id="parent_id" value="">
 
                         {% if session.user_id is not defined %}

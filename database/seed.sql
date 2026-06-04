@@ -17,9 +17,9 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- хэш сгенерирован password_hash('password', PASSWORD_DEFAULT)
 -- ────────────────────────────────────────────────────────────────
 INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `display_name`, `role`, `is_active`) VALUES
-(1, 'admin',  'admin@cms-flexi.local',  '$2y$12$KIXIhcw7qZpZyqx0F3l9.OoBT3uM1Wx2y0pT3DXuXfsYwQ7M5e9Ai', 'Андрей Демченко', 'admin',  1),
-(2, 'editor', 'editor@cms-flexi.local', '$2y$12$KIXIhcw7qZpZyqx0F3l9.OoBT3uM1Wx2y0pT3DXuXfsYwQ7M5e9Ai', 'CMS-Flexi Team', 'editor', 1),
-(3, 'maria',  'maria@cms-flexi.local',  '$2y$12$KIXIhcw7qZpZyqx0F3l9.OoBT3uM1Wx2y0pT3DXuXfsYwQ7M5e9Ai', 'Мария Смирнова', 'author', 1);
+(1, 'admin',  'admin@cms-flexi.local',  '$2y$10$ojBVm3IEOFMDNVR0MUt8XOR1pxEDWtVk.y2a6hjvcYLKNGbi2NMDi', 'Андрей Демченко', 'admin',  1),
+(2, 'editor', 'editor@cms-flexi.local', '$2y$10$ojBVm3IEOFMDNVR0MUt8XOR1pxEDWtVk.y2a6hjvcYLKNGbi2NMDi', 'CMS-Flexi Team', 'editor', 1),
+(3, 'maria',  'maria@cms-flexi.local',  '$2y$10$ojBVm3IEOFMDNVR0MUt8XOR1pxEDWtVk.y2a6hjvcYLKNGbi2NMDi', 'Мария Смирнова', 'author', 1);
 
 -- ────────────────────────────────────────────────────────────────
 -- категории (3 шт.)

@@ -1,0 +1,104 @@
+{% extends 'layouts/admin-base.twig' %}
+
+{% block title %}{{ is_edit ? 'Редактировать пользователя' : 'Новый пользователь' }}{% endblock %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="/admin/users">Пользователи</a></li>
+    <li class="breadcrumb-item active">{{ is_edit ? 'Редактирование' : 'Создание' }}</li>
+{% endblock %}
+
+{% block content %}
+{% set action = is_edit ? '/admin/users/' ~ user_row.id : '/admin/users' %}
+<div class="row">
+    <div class="col-md-8 col-lg-6">
+        <div class="card card-{{ is_edit ? 'warning' : 'primary' }}">
+            <div class="card-header">
+                <h3 class="card-title">
+                    {% if is_edit %}
+                        Редактирование «{{ user_row.username }}»
+                    {% else %}
+                        Создать пользователя
+                    {% endif %}
+                </h3>
+            </div>
+
+            <form method="post" action="{{ action }}">
+                {{ csrf_field() }}
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="u-username">Логин *</label>
+                        <input type="text" id="u-username" name="username"
+                               class="form-control {{ errors.username is defined ? 'is-invalid' : '' }}"
+                               value="{{ user_row.username|default('') }}"
+                               minlength="3" maxlength="64" required
+                               {{ is_edit ? '' : 'autofocus' }}>
+                        {% if errors.username is defined %}<div class="invalid-feedback">{{ errors.username }}</div>{% endif %}
+                        <small class="form-help">Латиница, цифры, символы <code>_ . -</code> (3–64 знака).</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="u-display">Отображаемое имя</label>
+                        <input type="text" id="u-display" name="display_name"
+                               class="form-control {{ errors.display_name is defined ? 'is-invalid' : '' }}"
+                               value="{{ user_row.display_name|default('') }}" maxlength="120">
+                        <small class="form-help">Как будет подписываться пользователь под публикациями и комментариями.</small>
+                        {% if errors.display_name is defined %}<div class="invalid-feedback">{{ errors.display_name }}</div>{% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="u-email">Email *</label>
+                        <input type="email" id="u-email" name="email"
+                               class="form-control {{ errors.email is defined ? 'is-invalid' : '' }}"
+                               value="{{ user_row.email|default('') }}" required>
+                        {% if errors.email is defined %}<div class="invalid-feedback">{{ errors.email }}</div>{% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="u-role">Роль *</label>
+                        <select id="u-role" name="role" class="form-control">
+                            {% for r in roles %}
+                                <option value="{{ r }}" {{ user_row.role|default('subscriber') == r ? 'selected' : '' }}>
+                                    {{ LABELS.user_role[r]|default(r) }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <small class="form-help">
+                            <strong>Администратор</strong> — полный доступ.
+                            <strong>Редактор</strong> — публикует и модерирует.
+                            <strong>Автор</strong> — пишет свои записи.
+                            <strong>Подписчик</strong> — только комментирует.
+                        </small>
+                        {% if errors.role is defined %}<small class="text-danger d-block">{{ errors.role }}</small>{% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="u-password">
+                            Пароль {{ is_edit ? '' : '*' }}
+                            {% if is_edit %}<small class="text-muted">(оставьте пустым, чтобы не менять)</small>{% endif %}
+                        </label>
+                        <input type="password" id="u-password" name="password"
+                               class="form-control {{ errors.password is defined ? 'is-invalid' : '' }}"
+                               minlength="8" {{ is_edit ? '' : 'required' }}>
+                        {% if errors.password is defined %}<div class="invalid-feedback">{{ errors.password }}</div>{% endif %}
+                        <small class="form-help">Минимум 8 символов.</small>
+                    </div>
+
+                    <div class="form-group form-check">
+                        <input type="checkbox" id="u-active" name="is_active" value="1"
+                               class="form-check-input"
+                               {{ (user_row.is_active|default(1)) ? 'checked' : '' }}>
+                        <label for="u-active" class="form-check-label">Учётная запись активна</label>
+                        <small class="form-help d-block">Снимите галочку, чтобы временно заблокировать вход.</small>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button class="btn btn-{{ is_edit ? 'warning' : 'primary' }}">
+                        <i class="fas fa-save mr-1"></i> {{ is_edit ? 'Сохранить' : 'Создать' }}
+                    </button>
+                    <a href="/admin/users" class="btn btn-link text-muted">← К списку</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

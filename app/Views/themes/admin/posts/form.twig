@@ -1,0 +1,170 @@
+{% extends 'layouts/admin-base.twig' %}
+
+{% block title %}{{ is_edit ? 'Редактировать запись' : 'Новая запись' }}{% endblock %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="/admin/posts">Записи</a></li>
+    <li class="breadcrumb-item active">{{ is_edit ? 'Редактирование' : 'Создание' }}</li>
+{% endblock %}
+
+{% block content %}
+{% set action = is_edit ? '/admin/posts/' ~ post.id : '/admin/posts' %}
+<form method="post" action="{{ action }}" id="post-form">
+    {{ csrf_field() }}
+
+    <div class="row">
+        {# ─── ОСНОВНОЕ ─── #}
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Контент</h3></div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="title">Заголовок *</label>
+                        <input type="text" name="title" id="title"
+                               class="form-control {{ errors.title is defined ? 'is-invalid' : '' }}"
+                               value="{{ post.title|default('') }}" required maxlength="200" autofocus>
+                        {% if errors.title is defined %}<div class="invalid-feedback">{{ errors.title }}</div>{% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="slug">Адрес страницы <small class="text-muted">(латиницей)</small></label>
+                        <input type="text" name="slug" id="slug"
+                               class="form-control {{ errors.slug is defined ? 'is-invalid' : '' }}"
+                               value="{{ post.slug|default('') }}" maxlength="220">
+                        <small class="form-help">Часть URL после <code>/post/</code>. Можно оставить пустым — сформируется автоматически из заголовка.</small>
+                        {% if errors.slug is defined %}<div class="invalid-feedback">{{ errors.slug }}</div>{% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="excerpt">Краткое описание</label>
+                        <textarea name="excerpt" id="excerpt" rows="2" maxlength="500"
+                                  class="form-control {{ errors.excerpt is defined ? 'is-invalid' : '' }}">{{ post.excerpt|default('') }}</textarea>
+                        <small class="form-help">Показывается в списках и анонсах. До 500 символов.</small>
+                        {% if errors.excerpt is defined %}<div class="invalid-feedback">{{ errors.excerpt }}</div>{% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="content">Содержание *</label>
+                        <textarea name="content" id="content" rows="14"
+                                  class="form-control {{ errors.content is defined ? 'is-invalid' : '' }}">{{ post.content|default('') }}</textarea>
+                        {% if errors.content is defined %}<div class="invalid-feedback">{{ errors.content }}</div>{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# ─── САЙДБАР ─── #}
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Публикация</h3></div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="status">Статус</label>
+                        <select name="status" id="status" class="form-control">
+                            {% for s in statuses %}
+                                <option value="{{ s }}" {{ post.status|default('draft') == s ? 'selected' : '' }}>
+                                    {{ LABELS.post_status[s]|default(s) }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="published_at">Дата публикации</label>
+                        <input type="datetime-local" name="published_at" id="published_at"
+                               class="form-control {{ errors.published_at is defined ? 'is-invalid' : '' }}"
+                               value="{{ post.published_at|default('') ? post.published_at|date('Y-m-d\\TH:i') : '' }}">
+                        <small class="form-help">Если оставить пустым при статусе «Опубликован» — поставится текущее время.</small>
+                        {% if errors.published_at is defined %}<div class="invalid-feedback">{{ errors.published_at }}</div>{% endif %}
+                    </div>
+
+                    <hr>
+
+                    <div class="form-group">
+                        <label for="category_id">Категория</label>
+                        <select name="category_id" id="category_id" class="form-control">
+                            <option value="">— без категории —</option>
+                            {% for c in categories %}
+                                <option value="{{ c.id }}" {{ post.category_id|default(0) == c.id ? 'selected' : '' }}>{{ c.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Теги</label>
+                        <div style="max-height:180px;overflow:auto;border:1px solid #ced4da;border-radius:4px;padding:8px">
+                            {% for t in tags %}
+                                <label class="d-block mb-1">
+                                    <input type="checkbox" name="tag_ids[]" value="{{ t.id }}"
+                                           {{ t.id in selected_tag_ids ? 'checked' : '' }}>
+                                    {{ t.name }}
+                                </label>
+                            {% else %}
+                                <em class="text-muted">Тегов нет — создайте в разделе «Теги».</em>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="featured_image">Изображение (URL)</label>
+                        <input type="text" name="featured_image" id="featured_image"
+                               class="form-control" value="{{ post.featured_image|default('') }}"
+                               placeholder="/assets/images/post-01.jpg">
+                    </div>
+
+                    <hr>
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-save mr-1"></i> Сохранить
+                    </button>
+                    <a href="/admin/posts" class="btn btn-link btn-block text-muted">← Назад к списку</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    // ─── TinyMCE для контента ────────────────────────────────────────
+    tinymce.init({
+        selector: 'textarea#content',
+        height: 480,
+        menubar: false,
+        plugins: 'lists link image code table autolink media preview searchreplace',
+        toolbar: 'undo redo | styleselect | bold italic underline | bullist numlist | link image media table | code preview',
+        promotion: false,
+        branding: false,
+    });
+
+    // ─── авто-slug при создании, если slug пустой ────────────────────
+    (function () {
+        var slug = document.getElementById('slug');
+        var title = document.getElementById('title');
+        if (!slug || !title) return;
+
+        // карта транслитерации для русского
+        var map = {
+            'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo','ж':'zh','з':'z','и':'i',
+            'й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t',
+            'у':'u','ф':'f','х':'h','ц':'c','ч':'ch','ш':'sh','щ':'sch','ъ':'','ы':'y','ь':'',
+            'э':'e','ю':'yu','я':'ya'
+        };
+        function slugify(s) {
+            s = (s || '').toLowerCase().trim();
+            var out = '';
+            for (var i = 0; i < s.length; i++) {
+                out += (map.hasOwnProperty(s[i]) ? map[s[i]] : s[i]);
+            }
+            return out.replace(/[^a-z0-9-_]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+        }
+
+        var manuallyEdited = slug.value.length > 0;
+        slug.addEventListener('input', function () { manuallyEdited = true; });
+        title.addEventListener('input', function () {
+            if (!manuallyEdited) slug.value = slugify(title.value);
+        });
+    })();
+</script>
+{% endblock %}
